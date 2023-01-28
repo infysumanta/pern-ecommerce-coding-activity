@@ -2,7 +2,9 @@ const pool = require("./../config/db");
 
 const getALLOrder = async (_req, res) => {
   try {
-    const orders = await pool.query("SELECT * FROM orders");
+    const orders = await pool.query(
+      "SELECT * FROM orders INNER JOIN OrderProductMap ON orders.id = OrderProductMap.orderId INNER JOIN products ON products.id = OrderProductMap.productId"
+    );
     res.json(orders.rows);
   } catch (error) {
     console.log(error);
