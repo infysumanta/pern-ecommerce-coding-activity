@@ -1,0 +1,31 @@
+{
+  "name": "pern-ecommerce-coding-activity",
+  "version": "1.0.0",
+  "description": "MERN Basic Ecommerce Application for Coding Activity",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infysumanta/pern-ecommerce-coding-activity.git"
+  },
+  "keywords": [],
+  "author": "Sumanta Kabiraj",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/infysumanta/pern-ecommerce-coding-activity/issues"
+  },
+  "homepage": "https://github.com/infysumanta/pern-ecommerce-coding-activity#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "pg": "^8.9.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
