@@ -1,3 +1,4 @@
+/* Created a Constant Instance of Environment Variable */
 module.exports = {
   PORT: process.env.PORT || 5000,
   DB_USER: process.env.DB_USER || "postgres",
