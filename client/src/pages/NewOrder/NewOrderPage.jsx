@@ -2,12 +2,17 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import ProductItem from "../../components/ProductItem";
 const NewOrderPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState();
   const [description, setDescription] = useState("");
 
   useEffect(() => {
+    /**
+     * fetches products data from the server
+     * endpoint api/products,
+     */
     const fetchProducts = async () => {
       const { data } = await axios.get("/api/products");
       setProducts(data);
@@ -15,6 +20,10 @@ const NewOrderPage = () => {
     fetchProducts();
   }, []);
 
+  /**
+   * If the product's id matches the product's id, then return the product with the checked property set
+   * to the opposite of what it was before.
+   */
   const checkedProductHandler = (product) => {
     let productArray = products.map((prod) => {
       if (prod.id === product.id) {
@@ -26,6 +35,10 @@ const NewOrderPage = () => {
     setProducts(productArray);
   };
 
+  /**
+   * When the form is submitted, the description and products are sent to the server, and if the server
+   * responds with a success message, the user is redirected to the home page.
+   */
   const formSubmitHandler = async () => {
     try {
       const body = {
@@ -43,6 +56,9 @@ const NewOrderPage = () => {
       toast.error(error.response?.data?.message);
     }
   };
+  /**
+   * When the user clicks the back button, the user will be navigated back to the order page.
+   */
   const backToOrder = () => {
     navigate("/");
   };
@@ -65,28 +81,12 @@ const NewOrderPage = () => {
             </div>
             <div className="product-list">
               {products &&
-                products.map((product, index) => (
-                  <div key={product.id} className="flex items-start gap-2 m-3">
-                    <input
-                      type="checkbox"
-                      value={product.id}
-                      name="product"
-                      checked={product.checked}
-                      className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-100 rounded cursor-pointer mt-1"
-                      id={`product_${product.id}`}
-                      onChange={(e) => {
-                        checkedProductHandler(product, e);
-                      }}
-                    />
-                    <label
-                      className="border w-full p-1 border-gray-400 cursor-pointer  rounded-md\\"
-                      htmlFor={`product_${product.id}`}
-                    >
-                      {product.name}
-                      <br />
-                      {product.description}
-                    </label>
-                  </div>
+                products.map((product) => (
+                  <ProductItem
+                    product={product}
+                    key={product.id}
+                    checkedProductHandler={checkedProductHandler}
+                  />
                 ))}
             </div>
           </div>

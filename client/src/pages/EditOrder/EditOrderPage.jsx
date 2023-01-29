@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import ProductItem from "../../components/ProductItem";
 
 const EditOrderPage = () => {
   const { id } = useParams();
@@ -9,22 +10,39 @@ const EditOrderPage = () => {
   const [products, setProducts] = useState();
   const [description, setDescription] = useState("");
 
+  // Calling when id and navigate modified
   useEffect(() => {
+    /**
+     * fetches single order data by the id password with params and get the data from the server
+     * endpoint /api/orders/:id
+     */
     const fetchOrderData = async () => {
       const { data } = await axios.get(`/api/orders/${id}`);
+      /* Setting the description state to the description of the order. */
       setDescription(data.description);
     };
+    /*Calling the fetchOrderData function */
     fetchOrderData();
   }, [id, navigate]);
 
+  // Calling when id and navigate modified
   useEffect(() => {
+    /**
+     * fetches products data from the server
+     * endpoint /api/products/:id
+     */
     const fetchProducts = async () => {
       const { data } = await axios.get(`/api/products/${id}`);
       setProducts(data);
     };
+    /*Calling the fetchProducts function */
     fetchProducts();
   }, [id, navigate]);
 
+  /**
+   * If the product id matches the product id in the array, return the product with the checked property
+   * set to the opposite of what it was before.
+   */
   const checkedProductHandler = (product) => {
     let productArray = products.map((prod) => {
       if (prod.id === product.id) {
@@ -36,6 +54,10 @@ const EditOrderPage = () => {
     setProducts(productArray);
   };
 
+  /**
+   * "formSubmitHandler" is a function that sends a PUT request to the server with the updated order
+   * information.
+   */
   const formSubmitHandler = async () => {
     try {
       const body = {
@@ -53,6 +75,9 @@ const EditOrderPage = () => {
       toast.error(error.response?.data?.message);
     }
   };
+  /**
+   * When the user clicks the backToOrder button, the user will be navigated to the home page.
+   */
   const backToOrder = () => {
     navigate("/");
   };
@@ -76,28 +101,12 @@ const EditOrderPage = () => {
             </div>
             <div className="product-list">
               {products &&
-                products.map((product, index) => (
-                  <div key={product.id} className="flex items-start gap-2 m-3">
-                    <input
-                      type="checkbox"
-                      value={product.id}
-                      name="product"
-                      checked={product.checked}
-                      className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-100 rounded cursor-pointer mt-1"
-                      id={`product_${product.id}`}
-                      onChange={(e) => {
-                        checkedProductHandler(product, e);
-                      }}
-                    />
-                    <label
-                      className="border w-full p-1 border-gray-400 cursor-pointer  rounded-md\\"
-                      htmlFor={`product_${product.id}`}
-                    >
-                      {product.name}
-                      <br />
-                      {product.description}
-                    </label>
-                  </div>
+                products.map((product) => (
+                  <ProductItem
+                    product={product}
+                    key={product.id}
+                    checkedProductHandler={checkedProductHandler}
+                  />
                 ))}
             </div>
           </div>
