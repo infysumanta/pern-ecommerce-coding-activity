@@ -1,10 +1,18 @@
 const pool = require("./../config/db");
 
-const getALLOrder = async (_req, res) => {
+const getALLOrder = async (req, res) => {
   try {
-    const orders = await pool.query(
-      "SELECT * FROM orders INNER JOIN OrderProductMap ON orders.id = OrderProductMap.orderId INNER JOIN products ON products.id = OrderProductMap.productId"
-    );
+    const { search } = req.query;
+
+    let query =
+      "SELECT orders.* FROM orders INNER JOIN OrderProductMap ON orders.id = OrderProductMap.orderId INNER JOIN products ON products.id = OrderProductMap.productId";
+    if (search.length > 0) {
+      query =
+        query +
+        ` WHERE orderdescription LIKE '%${search}%' or orders.id::text like '%${search}%' `;
+    }
+    console.log(query);
+    const orders = await pool.query(query);
     res.json(orders.rows);
   } catch (error) {
     console.log(error);
