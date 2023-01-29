@@ -6,7 +6,6 @@ const NewOrderPage = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState();
   const [description, setDescription] = useState("");
-  const [selectProducts, setSelectProducts] = useState([]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -16,23 +15,24 @@ const NewOrderPage = () => {
     fetchProducts();
   }, []);
 
-  const checkedProductHandler = (product, e) => {
-    if (e.target.checked) {
-      setSelectProducts((prevState) => [...prevState, product]);
-    } else {
-      setSelectProducts((prevState) =>
-        prevState.filter((item) => item.id !== product.id)
-      );
-    }
+  const checkedProductHandler = (product) => {
+    let productArray = products.map((prod) => {
+      if (prod.id === product.id) {
+        return { ...prod, checked: !prod.checked };
+      }
+      return prod;
+    });
+
+    setProducts(productArray);
   };
 
   const formSubmitHandler = async () => {
     try {
       const body = {
         orderDescription: description,
-        products: JSON.stringify(selectProducts),
+        products: JSON.stringify(products.filter((product) => product.checked)),
       };
-      const { data } = await axios.post("/api/orders", body);
+      const { data } = await axios.post(`/api/orders/`, body);
       if (data.success) {
         toast.success(data?.message);
         navigate("/");
@@ -58,6 +58,7 @@ const NewOrderPage = () => {
               <input
                 type="text"
                 className="order_descriptions"
+                value={description}
                 placeholder="Order Description"
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -70,6 +71,7 @@ const NewOrderPage = () => {
                       type="checkbox"
                       value={product.id}
                       name="product"
+                      checked={product.checked}
                       className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-100 rounded cursor-pointer mt-1"
                       id={`product_${product.id}`}
                       onChange={(e) => {
@@ -80,9 +82,9 @@ const NewOrderPage = () => {
                       className="border w-full p-1 border-gray-400 cursor-pointer  rounded-md\\"
                       htmlFor={`product_${product.id}`}
                     >
-                      {product.productname}
+                      {product.name}
                       <br />
-                      {product.productdescription}
+                      {product.description}
                     </label>
                   </div>
                 ))}

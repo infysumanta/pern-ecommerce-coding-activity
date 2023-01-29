@@ -61,8 +61,29 @@ const saveOrder = async (req, res) => {
 const getSingleOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const order = await pool.query("SELECT * FROM orders WHERE id = $1", [id]);
-    res.json(order.rows[0]);
+
+    let query =
+      "SELECT orders.id as orderid, orders.orderdescription as orderdescription, orders.createdat as createdat, products.id as productid, products.productname as productname, products.productdescription as productdescription FROM orders INNER JOIN OrderProductMap ON orders.id = OrderProductMap.orderId INNER JOIN products ON products.id = OrderProductMap.productId WHERE orders.id = $1";
+
+    const order = await pool.query(query, [id]);
+
+    let products = [];
+    order.rows.forEach((product) => {
+      products.push({
+        id: product.productid,
+        name: product.productname,
+        description: product.productdescription,
+      });
+    });
+
+    const orderData = {
+      id: order.rows[0].orderid,
+      description: order.rows[0].orderdescription,
+      createdAt: order.rows[0].createdat,
+      products: products,
+    };
+
+    res.json(orderData);
   } catch (error) {
     console.log(error);
     res.status(500).json({
