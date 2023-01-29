@@ -5,15 +5,27 @@ const getALLOrder = async (req, res) => {
     const { search } = req.query;
 
     let query =
-      "SELECT orders.* FROM orders INNER JOIN OrderProductMap ON orders.id = OrderProductMap.orderId INNER JOIN products ON products.id = OrderProductMap.productId";
+      "SELECT orders.id as orderid, orders.orderdescription as orderdescription, orders.createdat as createdat, count(*) as productcount from orders INNER JOIN OrderProductMap ON orders.id = OrderProductMap.orderId INNER JOIN products ON products.id = OrderProductMap.productId";
     if (search.length > 0) {
       query =
         query +
         ` WHERE orderdescription LIKE '%${search}%' or orders.id::text like '%${search}%' `;
     }
-    console.log(query);
+    query +=
+      " GROUP BY orders.id, orders.orderdescription, orders.createdat ORDER BY orders.id";
     const orders = await pool.query(query);
-    res.json(orders.rows);
+
+    // console.log(orders.rows);
+
+    let ordersArray = orders.rows.map((order) => {
+      return {
+        id: order.orderid,
+        description: order.orderdescription,
+        productCount: order.productcount,
+        createdAt: order.createdat,
+      };
+    });
+    res.json(ordersArray);
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -96,13 +108,40 @@ const getSingleOrder = async (req, res) => {
 const updateOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    const { description } = req.body;
+    const { orderDescription, products } = req.body;
+    const orderedProduct = JSON.parse(products);
+    if (orderedProduct.length <= 0) {
+      return res.status(500).json({
+        success: false,
+        message: "Please choose at-least one product to create Order!",
+      });
+    }
     await pool.query("UPDATE orders SET orderDescription = $1 WHERE id = $2", [
-      description,
+      orderDescription,
       id,
     ]);
 
-    res.json("Todo was updated!");
+    let productIdArray = orderedProduct.map(({ id }) => id);
+
+    await pool.query(
+      `DELETE FROM orderproductmap WHERE orderId = ${id} AND productId NOT IN (${productIdArray.toString()})`
+    );
+
+    await orderedProduct.map(async (product) => {
+      const query = `SELECT * FROM orderproductmap WHERE orderId = ${id} AND productId = ${product.id}`;
+      const checked = await pool.query(query);
+      if (!Boolean(checked.rows[0])) {
+        await pool.query(
+          "INSERT INTO OrderProductMap(orderId,productId) VALUES ($1, $2) RETURNING *",
+          [id, product.id]
+        );
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Order updated successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

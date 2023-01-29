@@ -64,9 +64,9 @@ const OrderManagementPage = () => {
                   orders.map((order, index) => (
                     <tr key={index}>
                       <td> {order.id}</td>
-                      <td> {order.orderdescription}</td>
-                      <td> {order.id}</td>
-                      <td>{moment(order.createdat).format("YYYY-MM-DD")}</td>
+                      <td> {order.description}</td>
+                      <td> {order.productCount}</td>
+                      <td>{moment(order.createdAt).format("YYYY-MM-DD")}</td>
                       <td className="text-center">
                         <button
                           className="edit_btn mr-5"
