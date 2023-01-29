@@ -86,7 +86,7 @@ const EditOrderPage = () => {
     <div className="w-1/3 m-auto mt-20">
       <div className="bg-white rounded-md shadow-md p-4">
         <div className="flex justify-between items-center">
-          <div className="font-bold text-2xl">New Order</div>
+          <div className="font-bold text-2xl">Edit Order</div>
         </div>
         <div className="card-body  mt-5">
           <div className="form-container">
