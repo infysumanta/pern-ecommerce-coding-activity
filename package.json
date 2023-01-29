@@ -4,7 +4,9 @@
   "description": "MERN Basic Ecommerce Application for Coding Activity",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "server": "nodemon index.js",
+    "dev": "concurrently \"npm run server\" \"npm run start --prefix client\"",
+    "prestart": "npm run build --prefix client",
     "start": "node index.js"
   },
   "repository": {
@@ -19,6 +21,7 @@
   },
   "homepage": "https://github.com/infysumanta/pern-ecommerce-coding-activity#readme",
   "dependencies": {
+    "concurrently": "^7.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
