@@ -1,13 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap");
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Roboto", sans-serif;
+  background-color: #cbd7fd !important;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+td,
+th {
+  @apply border border-gray-300 p-2;
+}
+
+th {
+  @apply uppercase;
+}
+
+.new_order_btn {
+  @apply bg-blue-500 rounded text-lg font-bold p-1 px-2 mt-5 text-white shadow-md hover:bg-blue-700 hover:shadow-sm focus:bg-blue-700 focus:shadow-sm focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-sm transition duration-150 ease-in-out;
+}
+.edit_btn {
+  @apply bg-blue-500 rounded text-sm p-1 px-2 text-white shadow-md hover:bg-blue-700 hover:shadow-sm focus:bg-blue-700 focus:shadow-sm focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-sm transition duration-150 ease-in-out;
+}
+
+.delete_btn {
+  @apply bg-red-500 rounded text-sm  p-1 px-2 text-white shadow-md hover:bg-red-700 hover:shadow-sm focus:bg-red-700 focus:shadow-sm focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-sm transition duration-150 ease-in-out;
+}
+
+.submit_btn {
+  @apply w-2/5 h-10 bg-green-500 rounded text-lg font-bold p-1 px-2 mt-5 text-white shadow-md hover:bg-green-700 hover:shadow-sm focus:bg-green-700 focus:shadow-sm focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-sm transition duration-150 ease-in-out;
+}
+.cancel_btn {
+  @apply w-2/5 h-10 bg-orange-500 rounded text-lg font-bold p-1 px-2 mt-5 text-white shadow-md hover:bg-orange-700 hover:shadow-sm focus:bg-orange-700 focus:shadow-sm focus:outline-none focus:ring-0 active:bg-orange-800 active:shadow-sm transition duration-150 ease-in-out;
+}
+
+.search_order {
+  @apply block w-full rounded border px-4 py-2 border-solid transition ease-in-out focus:bg-white focus:border-gray-600 focus:outline-none;
+}
+
+.order_descriptions {
+  @apply block w-full rounded border px-4 py-2 border-solid border-gray-400 transition ease-in-out focus:bg-white focus:border-gray-600 focus:outline-none;
 }

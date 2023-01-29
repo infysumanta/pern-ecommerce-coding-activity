@@ -25,16 +25,30 @@ const getALLOrder = async (req, res) => {
 
 const saveOrder = async (req, res) => {
   try {
-    const { orderDescription, productId } = req.body;
+    const { orderDescription, products } = req.body;
+    const orderedProduct = JSON.parse(products);
+    if (orderedProduct.length <= 0) {
+      return res.status(500).json({
+        success: false,
+        message: "Please choose at-least one product to create Order!",
+      });
+    }
+
     const newOrder = await pool.query(
       "INSERT INTO orders(orderDescription, createdAt) VALUES ($1, $2) RETURNING *",
       [orderDescription, new Date()]
     );
-    const productOrderMap = await pool.query(
-      "INSERT INTO OrderProductMap(orderId,productId) VALUES ($1, $2) RETURNING *",
-      [newOrder.rows[0].id, productId]
-    );
-    res.json("Order Created");
+    await orderedProduct.map(async (prod) => {
+      await pool.query(
+        "INSERT INTO OrderProductMap(orderId,productId) VALUES ($1, $2) RETURNING *",
+        [newOrder.rows[0].id, prod.id]
+      );
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Order created successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
@@ -80,8 +94,12 @@ const updateOrder = async (req, res) => {
 const deleteOrder = async (req, res) => {
   try {
     const { id } = req.params;
-    await pool.query("DELETE FROM orders WHERE id = $1", [id]);
-    res.json("Todo was deleted!");
+    await pool.query("DELETE FROM orders WHERE id = $1 RETURNING *", [id]);
+
+    res.status(200).json({
+      success: true,
+      message: "Order deleted successfully",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
